@@ -1,8 +1,14 @@
 # unity-devops-jenkins
 Jenkins Devops Pipelines for Unity Games
 
+Unity Version: 2021.1.16f1
+Jenkins Version: 2.289.3
+
 ### NothingGame
 NothingGame is a Unity Game with nothing in it. The game that does nothing! I just use it as a placeholder in my devops pipeline for Unity Games. 
+
+### Steps
+1. Create a sytem environment variable 'unity' (no quotation marks) that points to your Unity installation. Mine is ``C:\Program Files\Unity\Hub\Editor\2021.1.16f1\Editor``
 
 ### My Tutorials Online: <br>
 Installing SonarQube as a Service on Boot on Windows 10/11 <br>
