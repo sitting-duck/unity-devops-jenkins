@@ -65,7 +65,7 @@ namespace Jenkins {
 
         private static string[] EnabledLevels()
         {
-            foreach(sceneAsset in EditorBuildSettings.scenes) {
+            foreach(var sceneAsset in EditorBuildSettings.scenes) {
                 string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 Debug.Log("scenePath: " + scenePath);
             }
