@@ -45,7 +45,7 @@ namespace Jenkins {
                 }
                 i++;            
             }
-            BuildReport report = BuildPipeline.BuildPlayer(EnabledLevels(), programName, BuildTarget.StandaloneWindows, BuildOptions.Development);
+            BuildReport report = BuildPipeline.BuildPlayer(EnabledLevels(), programName, BuildTarget.StandaloneWindows, buildPlayerOptions.options);
             BuildSummary summary = report.summary;
 
             if(summary.result == BuildResult.Succeeded) {
@@ -65,6 +65,11 @@ namespace Jenkins {
 
         private static string[] EnabledLevels()
         {
+            foreach(sceneAsset in EditorBuildSettings.scenes) {
+                string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
+                Debug.Log("scenePath: " + scenePath);
+            }
+
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
         }
     }
