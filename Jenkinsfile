@@ -18,7 +18,7 @@ pipeline {
         stage ('Build') {
         steps { script {
             bat """
-            \"${UNITY_PATH}\" -nographics -buildTarget Win64 -quit -batchmode -projectPath . -appname ${appname} -executeMethod Jenkins.CmdLine.parseCommandLineArgs ${build} -buildWindows64Player "${target}"
+            \"${UNITY_PATH}\" -nographics -buildTarget Win64 -quit -batchmode -projectPath ./${appname} -appname ${appname} -executeMethod Jenkins.CmdLine.parseCommandLineArgs ${build} -buildWindows64Player "${target}"
             """
         }}}
         
