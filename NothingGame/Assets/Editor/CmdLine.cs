@@ -15,28 +15,13 @@ namespace Jenkins {
         [DllImport("user32.dll", EntryPoint = "SetWindowText")]
         public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
-        public static extern System.IntPtr FindWindow(System.String className, System.String windowName);
+        public static extern System.IntPtr FindWindow(System.String className, System.String windowName);        
 
-        static string cmdInfo = "";                     // holds all command line args passed in
-        private string programName = "NothingGame.exe"; // hardcoded here, but can also be passed in with -appname argument
-
-        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();
-     
-        void Start () 
-        {
-            string[] arguments = Environment.GetCommandLineArgs();
-            foreach(string arg in arguments)
-            {
-                cmdInfo += arg.ToString() + "\n ";
-            }
-        }
-
-        public static void ChangeTitle(string newTitle) {
-            var windowPtr = FindWindow(null, this.programName);
-            SetWindowText(windowPtr, newTitle);
-        }
+        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();            
 
         public static void parseCommandLineArgs() {
+            string programName = "NothingGame"; // hardcoded here, but can also be passed in with -appname argument
+
             string[] args = System.Environment.GetCommandLineArgs();
             int i = 0;
             
@@ -71,11 +56,17 @@ namespace Jenkins {
                 Debug.Log("Build Failed");
             }
         }
-    }
 
-    private static string[] EnabledLevels()
-    {
-        return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
+        // Changes the title bar, often used to visually indicate a game is a debug build
+        public static void ChangeTitle(string newTitle) {
+            var windowPtr = FindWindow(null, newTitle);
+            SetWindowText(windowPtr, newTitle);            
+        }
+
+        private static string[] EnabledLevels()
+        {
+            return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
+        }
     }
 }
 

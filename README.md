@@ -8,7 +8,7 @@ Jenkins Version: 2.289.3
 NothingGame is a Unity Game with nothing in it. The game that does nothing! I just use it as a placeholder in my devops pipeline for Unity Games. 
 
 ### Steps
-1. Create a sytem environment variable 'unity' (no quotation marks) that points to your Unity installation. Mine is ``C:\Program Files\Unity\Hub\Editor\2021.1.16f1\Editor``
+1. Create a sytem environment variable 'unity_nothing_game' (no quotation marks) that points to your Unity installation. Mine is ``C:\Program Files\Unity\Hub\Editor\2021.1.16f1\Editor``
 
 ### My Tutorials Online: <br>
 How to Jenkins Pipeline for Unity Game with SonarQube <br>

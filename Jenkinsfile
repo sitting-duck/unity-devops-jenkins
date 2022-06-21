@@ -1,4 +1,4 @@
-UNITY_PATH = '%unity%' // create system environment var pointing to unity install path
+UNITY_PATH = '%unity_nothing_game%' // create system environment var pointing to unity install path
 
 pipeline {
     parameters {
@@ -9,7 +9,7 @@ pipeline {
     agent any 
     
     environment {
-        appname = "NothingGame" // Set to your own game
+        appname = "NothingGame" // Set to your own game. "NothingGame: The game that does nothing!"
         release_name = "${ "${release}" == "alpha" || "${release}" == "beta" ? "${release}" : "" }" 
         target = "${ "${build}" == "Release" ? "${appname}${release_name}.exe" : " ${appname}_Debug_${release_name}.exe" }" // append debug for debug builds, nothing for release builds
     }
