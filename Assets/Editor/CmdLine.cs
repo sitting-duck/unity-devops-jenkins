@@ -69,7 +69,7 @@ namespace Jenkins {
         private static string[] EnabledLevels()
         {
             foreach(var sceneAsset in EditorBuildSettings.scenes) {
-                Debug.Log("AssetDatabase.GetAssetPath(sceneAsset).path: " + AssetDatabase.GetAssetPath(sceneAsset).path)
+                Debug.Log("AssetDatabase.GetAssetPath(sceneAsset).path: " + AssetDatabase.GetAssetPath(sceneAsset).path);
                 string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
                 //UnityEditor.EditorBuildSettingsScene scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 Debug.Log("scenePath: " + scenePath);
