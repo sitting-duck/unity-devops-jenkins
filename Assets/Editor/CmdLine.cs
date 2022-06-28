@@ -66,29 +66,7 @@ namespace Jenkins {
         public static void ChangeTitle(string newTitle) {
             var windowPtr = FindWindow(null, newTitle);
             SetWindowText(windowPtr, newTitle);            
-        }
-
-        /*private static string[] EnabledLevelsOld()
-        {
-            foreach(var sceneAsset in EditorBuildSettings.scenes) {                    
-                
-                //string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
-                string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
-                //UnityEditor.EditorBuildSettingsScene scenePath = AssetDatabase.GetAssetPath(sceneAsset);
-                Debug.Log("scenePath: " + scenePath);
-            }
-
-            return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
-        }*/
-
-        /*private static string[] EnabledLevelsFail() {
-            int sceneCount = UnityEngine.SceneManagment.SceneManager.sceneCountInBuildSettings;
-            string[] scenes = new string[sceneCount];
-            for(int i = 0; i < sceneCount; i++) {
-                scenes[i] = System.IO.Path.GetFileNameWithoutExtension(UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(i));
-            }
-            return scenes;
-        }*/
+        }    
 
         private static string[] EnabledLevels() {
             List<string> scenes = new List<string>();
