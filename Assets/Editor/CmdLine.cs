@@ -79,11 +79,21 @@ namespace Jenkins {
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
         }
 
-        private static string[] EnabledLevels() {
+        private static string[] EnabledLevelsFail() {
             int sceneCount = UnityEngine.SceneManagment.SceneManager.sceneCountInBuildSettings;
             string[] scenes = new string[sceneCount];
             for(int i = 0; i < sceneCount; i++) {
                 scenes[i] = System.IO.Path.GetFileNameWithoutExtension(UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(i));
+            }
+            return scenes;
+        }
+
+        private static string[] EnabledLevels() {
+            List<string> scenes = new List<string>();
+            foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes) {
+                if(scene.enabled) {
+                    scenes.add(scene.path);
+                }
             }
             return scenes;
         }
