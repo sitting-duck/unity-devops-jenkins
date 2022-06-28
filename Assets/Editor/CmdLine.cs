@@ -77,11 +77,7 @@ namespace Jenkins {
 
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
         }
-
-        private static string[] EnabledLevels() {
-            List<EditorBuildSettingsScene> editorBuildSettingsScenes = new List<EditorBuildSettingsScene>();
-            foreach(var sceneAsset in )
-        }
+    
     }
 }
 
