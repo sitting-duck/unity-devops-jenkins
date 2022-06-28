@@ -17,7 +17,7 @@ namespace Jenkins {
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         public static extern System.IntPtr FindWindow(System.String className, System.String windowName);        
 
-        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();            
+        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();       
 
         public static void parseCommandLineArgs() {
             string programName = "NothingGame"; // hardcoded here, but can also be passed in with -appname argument
@@ -45,7 +45,8 @@ namespace Jenkins {
                 }
                 i++;            
             }
-            BuildReport report = BuildPipeline.BuildPlayer(EnabledLevels(), programName, BuildTarget.StandaloneWindows, buildPlayerOptions.options);
+            //BuildReport report = BuildPipeline.BuildPlayer(EnabledLevels(), programName, BuildTarget.StandaloneWindows, buildPlayerOptions.options);
+            BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             BuildSummary summary = report.summary;
 
             if(summary.result == BuildResult.Succeeded) {
@@ -63,7 +64,7 @@ namespace Jenkins {
             SetWindowText(windowPtr, newTitle);            
         }
 
-        private static string[] EnabledLevels()
+        /*private static string[] EnabledLevels()
         {
             foreach(var sceneAsset in EditorBuildSettings.scenes) {
                 string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
@@ -71,7 +72,7 @@ namespace Jenkins {
             }
 
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
-        }
+        }*/
     }
 }
 
