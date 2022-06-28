@@ -7,6 +7,8 @@ using UnityEditor.Build.Reporting;
 using System.Linq;
 using System.Runtime.InteropServices;
 
+/* Works with Unity version 2021.16f1 */
+
 namespace Jenkins {
 
     public class CmdLine : MonoBehaviour 
@@ -67,7 +69,8 @@ namespace Jenkins {
         private static string[] EnabledLevels()
         {
             foreach(var sceneAsset in EditorBuildSettings.scenes) {
-                string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
+                string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
+                //UnityEditor.EditorBuildSettingsScene scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 Debug.Log("scenePath: " + scenePath);
             }
 
