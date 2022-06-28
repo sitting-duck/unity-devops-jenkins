@@ -19,7 +19,7 @@ namespace Jenkins {
         [DllImport("user32.dll", EntryPoint = "FindWindow")]
         public static extern System.IntPtr FindWindow(System.String className, System.String windowName);        
 
-        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();       
+        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();        
 
         public static void parseCommandLineArgs() {
             string programName = "NothingGame"; // hardcoded here, but can also be passed in with -appname argument
@@ -69,12 +69,18 @@ namespace Jenkins {
         private static string[] EnabledLevels()
         {
             foreach(var sceneAsset in EditorBuildSettings.scenes) {
+                Debug.Log("AssetDatabase.GetAssetPath(sceneAsset).path: " + AssetDatabase.GetAssetPath(sceneAsset).path)
                 string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
                 //UnityEditor.EditorBuildSettingsScene scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 Debug.Log("scenePath: " + scenePath);
             }
 
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
+        }
+
+        private static string[] EnabledLevels() {
+            List<EditorBuildSettingsScene> editorBuildSettingsScenes = new List<EditorBuildSettingsScene>();
+            foreach(var sceneAsset in )
         }
     }
 }
