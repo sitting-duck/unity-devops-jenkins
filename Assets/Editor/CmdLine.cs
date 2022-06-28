@@ -66,7 +66,7 @@ namespace Jenkins {
             SetWindowText(windowPtr, newTitle);            
         }
 
-        private static string[] EnabledLevelsOld()
+        /*private static string[] EnabledLevelsOld()
         {
             foreach(var sceneAsset in EditorBuildSettings.scenes) {                    
                 
@@ -77,7 +77,7 @@ namespace Jenkins {
             }
 
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
-        }
+        }*/
 
         private static string[] EnabledLevelsFail() {
             int sceneCount = UnityEngine.SceneManagment.SceneManager.sceneCountInBuildSettings;
