@@ -6,6 +6,8 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
 
 /* Works with Unity version 2021.16f1 */
 
@@ -79,14 +81,14 @@ namespace Jenkins {
             return (from scene in EditorBuildSettings.scenes where scene.enabled select scene.path).ToArray();
         }*/
 
-        private static string[] EnabledLevelsFail() {
+        /*private static string[] EnabledLevelsFail() {
             int sceneCount = UnityEngine.SceneManagment.SceneManager.sceneCountInBuildSettings;
             string[] scenes = new string[sceneCount];
             for(int i = 0; i < sceneCount; i++) {
                 scenes[i] = System.IO.Path.GetFileNameWithoutExtension(UnityEngine.SceneManagement.SceneUtility.GetScenePathByBuildIndex(i));
             }
             return scenes;
-        }
+        }*/
 
         private static string[] EnabledLevels() {
             List<string> scenes = new List<string>();
