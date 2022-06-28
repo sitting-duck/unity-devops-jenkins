@@ -97,7 +97,7 @@ namespace Jenkins {
                     scenes.add(scene.path);
                 }
             }
-            return scenes;
+            return scenes.toArray();
         }
     
     }
