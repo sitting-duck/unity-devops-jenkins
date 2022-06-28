@@ -94,7 +94,7 @@ namespace Jenkins {
             List<string> scenes = new List<string>();
             foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes) {
                 if(scene.enabled) {
-                    scenes.add(scene.path);
+                    scenes.Add(scene.path);
                 }
             }
             return scenes.ToArray();
