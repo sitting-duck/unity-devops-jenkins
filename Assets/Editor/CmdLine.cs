@@ -68,11 +68,10 @@ namespace Jenkins {
 
         private static string[] EnabledLevels()
         {
-            Debug.Log("derp EditorBuildSettings.scenes: " + EditorBuildSettings.scenes);
-            foreach(var sceneAsset in EditorBuildSettings.scenes) {    
-                Debug.Log("lala sceneAsset: " + sceneAsset);
-                Debug.Log("AssetDatabase.GetAssetPath(sceneAsset).path: " + AssetDatabase.GetAssetPath(sceneAsset).path);
-                string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
+            foreach(var sceneAsset in EditorBuildSettings.scenes) {                    
+                
+                //string scenePath = AssetDatabase.GetAssetPath(sceneAsset).path;
+                string scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 //UnityEditor.EditorBuildSettingsScene scenePath = AssetDatabase.GetAssetPath(sceneAsset);
                 Debug.Log("scenePath: " + scenePath);
             }
