@@ -237,6 +237,259 @@ pipeline {
 }
 ```
 
+## Step 5: Create a Command Line Parser inside the Unity with a C# Script
+Inside Assets/Editor Create a C# script inside the Unity Editor. 
+
+<img width="266" alt="image" src="https://user-images.githubusercontent.com/1289702/178121998-e0b23d98-dc43-4629-9905-c450f2ea6d92.png">
+
+Use this text: <br>
+
+``` csharp
+#if UNITY_STANDALONE_WIN
+
+using UnityEngine;
+using System;
+using UnityEditor;
+using UnityEditor.Build.Reporting;
+using System.Linq;
+using System.Runtime.InteropServices;
+using System.Collections;
+using System.Collections.Generic;
+
+/* Works with Unity version 2021.16f1 */
+
+namespace Jenkins {
+
+    public class CmdLine : MonoBehaviour 
+    {
+
+        [DllImport("user32.dll", EntryPoint = "SetWindowText")]
+        public static extern bool SetWindowText(System.IntPtr hwnd, System.String lpString);
+        [DllImport("user32.dll", EntryPoint = "FindWindow")]
+        public static extern System.IntPtr FindWindow(System.String className, System.String windowName);        
+
+        static BuildPlayerOptions buildPlayerOptions = new BuildPlayerOptions();        
+
+        public static void parseCommandLineArgs() {
+            string programName = "NothingGame"; // hardcoded here, but can also be passed in with -appname argument
+
+            string[] args = System.Environment.GetCommandLineArgs();
+            int i = 0;
+            
+            foreach (string arg in args)
+            {
+                if (i > 0 && arg == "Release") {
+                    buildPlayerOptions.options = BuildOptions.None;
+                }
+                if (i > 0 && arg == "Debug") {
+                    buildPlayerOptions.options = BuildOptions.Development | BuildOptions.AllowDebugging | BuildOptions.EnableCodeCoverage | BuildOptions.EnableDeepProfilingSupport;
+                    PlayerSettings.productName = PlayerSettings.productName + "_Debug";
+                    programName = "_Debug.exe";
+                    ChangeTitle(programName);
+
+                    EditorUserBuildSettings.development = true;
+                    EditorUserBuildSettings.allowDebugging = true;
+                    EditorUserBuildSettings.connectProfiler = true;
+                }
+                if (i > 0 && arg == "-appname") {
+                    programName = args[i+1];
+                }
+                i++;            
+            }
+            BuildReport report = BuildPipeline.BuildPlayer(EnabledLevels(), programName, BuildTarget.StandaloneWindows, buildPlayerOptions.options);
+            //BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
+            BuildSummary summary = report.summary;
+
+            if(summary.result == BuildResult.Succeeded) {
+                Debug.Log("Build Succeeded: " + summary.totalSize + " bytes");
+            }
+
+            if(summary.result == BuildResult.Failed) {
+                Debug.Log("Build Failed");
+            }
+        }
+
+        // Changes the title bar, often used to visually indicate a game is a debug build
+        public static void ChangeTitle(string newTitle) {
+            var windowPtr = FindWindow(null, newTitle);
+            SetWindowText(windowPtr, newTitle);            
+        }    
+
+        private static string[] EnabledLevels() {
+            List<string> scenes = new List<string>();
+            foreach(EditorBuildSettingsScene scene in EditorBuildSettings.scenes) {
+                if(scene.enabled) {
+                    scenes.Add(scene.path);
+                }
+            }
+            return scenes.ToArray();
+        }
+    
+    }
+}
+
+#endif
+```
+
+Replace "NothingGame" with the name of your Unity game. <br>
+
+This will append "_debug" to the program name in the title bar, making it really obvious if you have shipped the debug build on accident and so on. <br>
+
+## Step 6: Create Jenkins Environment Variables
+
+In the main dashboard (go to http://localhost:8080 if you get lost to go back to the main dashboard) and select "Manage Jenkins" <br>
+
+<img width="153" alt="image" src="https://user-images.githubusercontent.com/1289702/178122032-23ff8513-a97b-442b-ba33-3a1becd6ad6a.png">
+
+Select "Configure System" <br>
+
+<img width="317" alt="image" src="https://user-images.githubusercontent.com/1289702/178122038-b3479c43-03ef-40de-925d-a534fa1ed5c3.png">
+
+Scroll down to the section Labelled "Global properties" and check the box labelled "Environment Variables" <br>
+
+<img width="210" alt="image" src="https://user-images.githubusercontent.com/1289702/178122046-bde964fd-b5df-452b-83db-5c1652372ef6.png">
+
+Click the Add button <br>
+
+<img width="115" alt="image" src="https://user-images.githubusercontent.com/1289702/178122051-750254f6-30d9-4426-b05b-aa22f826d26a.png">
+
+Add a variable with the name "unity_nothing_game" set to the value: <br>
+
+```batch
+C:\Program Files\Unity\Hub\Editor\2021.1.16f1\Editor
+```
+
+or wherever you had your Unity installed on your machine <br>
+
+<img width="295" alt="image" src="https://user-images.githubusercontent.com/1289702/178122068-6da3ac95-bfd0-458f-bd8a-cefc8bde0dcf.png">
+
+Click the Save button at the bottom to accept. <br>
+
+<img width="48" alt="image" src="https://user-images.githubusercontent.com/1289702/178122071-ca036ada-6b92-4512-9936-a5edf140aa89.png">
+
+## Step 6: Create Your Jenkins Project
+Click the New Item button in the main dashboard to create your project <br>
+
+<img width="317" alt="image" src="https://user-images.githubusercontent.com/1289702/178122084-04ab6532-71c5-4cc1-912a-1ffd8a6fce7c.png">
+
+Give it a project name <br>
+
+<img width="313" alt="image" src="https://user-images.githubusercontent.com/1289702/178122096-1ccbe97c-4a31-4822-b4c0-327885039b5d.png">
+
+Select Pipeline for project type. <br>
+
+<img width="314" alt="image" src="https://user-images.githubusercontent.com/1289702/178122106-e80a1b5e-3097-400a-b6f3-3ce0597b6191.png">
+
+In the General Section (the first section) check the GitHub Project checkbox and enter the url of the Github project: <br>
+
+<img width="306" alt="image" src="https://user-images.githubusercontent.com/1289702/178122117-562e9d80-f9ad-4f4d-944f-56bfa1d9de68.png">
+
+Basically use the same path you use when you do git clone to pull down the repo. <br>
+
+<img width="315" alt="image" src="https://user-images.githubusercontent.com/1289702/178122120-7228a47c-9004-4662-8553-c7da7ea49bc5.png">
+
+Scroll down the Build Triggers Section and Check the "Github hook trigger for GITScm Polling" checkbox. This basically just means that it will build every time you push to the branch that you have it set to watch. <br>
+
+<img width="308" alt="image" src="https://user-images.githubusercontent.com/1289702/178122127-0178a4c1-532a-4db5-a7f1-f7b5c4cffeb4.png">
+
+
+Scroll down to the Pipeline Section. <br>
+By default it will look like this: <br>
+
+<img width="313" alt="image" src="https://user-images.githubusercontent.com/1289702/178122139-9629a27b-53ea-414e-95db-31239c4bfb7d.png">
+
+Use the ComboBox and switch from "Pipeline Script" to "Pipeline Script from SCM" SCM means source control management by the way. <br>
+
+<img width="300" alt="image" src="https://user-images.githubusercontent.com/1289702/178122146-0a2deeea-a393-466f-9fa9-fd86f4f3a546.png">
+
+Some new ComboBoxes will appear after that. <br>
+In the SCM ComboBox that appears select "Git" instead of None for SCM. You are saying that on Git there will be a "Pipeline Script" <br>
+
+<img width="308" alt="image" src="https://user-images.githubusercontent.com/1289702/178122170-a49c451a-60cd-4d44-9384-676762922517.png">
+
+For Repository URL paste in that https:// url to the github repo again <br>
+
+```
+https://github.com/sitting-duck/unity-devops-jenkins.git
+```
+
+<img width="296" alt="image" src="https://user-images.githubusercontent.com/1289702/178122194-22b1beab-9b7b-48c0-9f56-f6258a61cca0.png">
+
+You can skip the "Credentials" section since this is a public repo. <br>
+
+By default the "Branch Specifier" is set to "master", change that to "main" <br>
+
+<img width="315" alt="image" src="https://user-images.githubusercontent.com/1289702/178122210-93982a6e-be83-43a6-89a8-3b02f2610395.png">
+
+after your change it will look like this: <br>
+
+<img width="311" alt="image" src="https://user-images.githubusercontent.com/1289702/178122218-7229c9dd-f6f8-4a95-bcce-2ead9c616d37.png">
+
+The next thing is "Script Path" and by default it just says Jenkinsfile. You can set the path to the Jenkinsfile here basically. Just leave it at the default, but if you needed to you could set a custom path like "deploy/Jenkinsfile" or have two Jenkinsfiles if you wanted and specify one build server to look for Jenkinsfile-win and the other to Jenkinsfile-mac and things like that if you wanted to. <br>
+
+<img width="301" alt="image" src="https://user-images.githubusercontent.com/1289702/178122228-8574b8da-6689-4e68-b832-68b3b2948727.png">
+
+Uncheck Lightweight Checkout <br>
+
+<img width="295" alt="image" src="https://user-images.githubusercontent.com/1289702/178122236-f986679c-a84d-4fd2-9998-cf875f556efb.png">
+
+I haven't set anything with lightweight checkout in my git commits so you won't need that to checkout and build the NothingGame. <br>
+
+Click the Save button to accept these Settings. <br>
+
+<img width="303" alt="image" src="https://user-images.githubusercontent.com/1289702/178122248-c8854efe-abaf-4d56-968c-9a3ea408025a.png">
+
+Click the Build Now button <br>
+
+<img width="313" alt="image" src="https://user-images.githubusercontent.com/1289702/178122260-dfd8f3f4-4de9-486c-af89-e2f93928fc28.png">
+
+If it fails the first time with an error like this: <br>
+
+```
+groovy.lang.MissingPropertyException: No such property: build for class: groovy.lang.Binding
+```
+
+That's just because the first time it parses the Jenkinsfile it will choke on the parameters the first time, but it will work every time after that. <br>
+Go ahead and build it again. You can see that the Build button says "Build with Parameters" now, so it will work with the parameters it finds in the Jenkinsfile now, <br>
+
+<img width="311" alt="image" src="https://user-images.githubusercontent.com/1289702/178122278-dc8267e4-4111-4c85-aaff-e4c3590b445a.png">
+
+You can leave the default parameters and click the build button: <br>
+<img width="314" alt="image" src="https://user-images.githubusercontent.com/1289702/178122289-0789578e-1c3f-4ab2-8add-37c830114ce3.png">
+
+View the Console Output by using the Triangle Menu next to the timestamp for the latest build and selecting Console Output <br>
+
+<img width="316" alt="image" src="https://user-images.githubusercontent.com/1289702/178122305-59d17571-91a6-4ab6-9b17-52635935fc58.png">
+
+### If You have Error Message During Build
+Scroll past this section if you can build with no errors <br>
+```
+DisplayProgressNotification: Build Failed
+'' is an incorrect path for a scene file. BuildPlayer expects paths relative to the project folder.
+```
+Solution: Add scenes to build in the BuildSettings. BuildSettings had no scenes to build. <br>
+
+<img width="300" alt="image" src="https://user-images.githubusercontent.com/1289702/178122330-00556168-0a92-4a87-9cea-0e5b88beffff.png">
+
+### After You're Done Building
+You should go into your Jenkins workspace for that project and check that your game executable is actually there and that it actually runs.
+Jenkins will show you "Success" at the end of a build if the script did not throw any errors, but Jenkins is not intelligent enough to know if your game actually built the way that you wanted, so you must do some testing and verify. <br>
+
+<img width="148" alt="image" src="https://user-images.githubusercontent.com/1289702/178122345-e8b81abf-435c-4e26-a86c-98ec422166e7.png">
+
+Sometimes this can be misleading. Check your workspace and make sure your build artifacts are actually there <br>
+
+## Step 8: Check and Test Your Game
+I can see my game is actually here in my workspace: <br>
+<img width="318" alt="image" src="https://user-images.githubusercontent.com/1289702/178122367-9562dd99-6754-42c9-bfb0-ce3e18e9f61a.png">
+
+And I double click the game to make sure it actually launches. <br>
+
+<img width="308" alt="image" src="https://user-images.githubusercontent.com/1289702/178122372-b2275899-5d61-434e-815c-d16d660f6909.png">
+
+
+And it does.
+
 
 ### My Tutorials Online: <br>
 How to Jenkins Pipeline for Unity Game with SonarQube <br>
@@ -247,3 +500,10 @@ https://ashley-tharp.medium.com/how-to-install-sonarqube-on-windows-11-7361a26ca
 <br>
 Installing Jenkins on Windows 10/11 <br>
 https://ashley-tharp.medium.com/how-to-setup-jenkins-on-windows-10-ac969ee921f2 <br>
+
+### References
+[1] Generating and Using a Login Token in SonarQube. https://docs.sonarqube.org/latest/user-guide/user-token/ <br>
+[2] DotNet 6.0 SDK Download Page Windows. https://dotnet.microsoft.com/en-us/download#windowsvs2015 <br>
+[3] SonarScanner for MSBuild. https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-msbuild/ <br>
+[4] Unity Download Archive. https://unity3d.com/get-unity/download/archive <br>
+
